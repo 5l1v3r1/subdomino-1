@@ -40,7 +40,6 @@ def process(args):
 
 def main():
     args = parse()
-    print(args)
     process(args)
 
 
