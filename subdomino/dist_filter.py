@@ -15,14 +15,14 @@ class DistFilter(suffix_filter.SuffixFilter):
 
     def __init__(self, suffix_file=None, invert=False):
         super().__init__(suffix_file, invert)
-        self.subdomain_sets = defaultdict(lambda: defaultdict(int))
+        self.subdomain_counts = defaultdict(int)
 
     def match(self, prefix, suffix, fd):
         labels = prefix.split('.')
         if len(labels) > 1:
-            domain = labels[-1]
             subdomain = labels[-2]
-            self.subdomain_sets[domain][subdomain] += 1
+            self.subdomain_counts[subdomain] += 1
 
     def end(self, fd):
-        pass
+        for subdomain, count in self.subdomain_counts.items():
+            print('{}: {}'.format(subdomain, count), file=fd)

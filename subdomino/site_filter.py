@@ -13,4 +13,4 @@ class SiteFilter(suffix_filter.SuffixFilter):
 
     def match(self, prefix, suffix, fd):
         top_level_subdomain = prefix.split('.')[-1]
-        print('.'.join([top_level_subdomain, suffix]), fd)
+        print('.'.join([top_level_subdomain, suffix]), file=fd)

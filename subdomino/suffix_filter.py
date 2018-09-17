@@ -31,14 +31,14 @@ class SuffixFilter(object):
                 filter.
         """
         for line in fileinput.input(file_path):
-            if len(line.strip()) > 0 and line[:2] != '//':
+            if len(line.strip()) > 0 and line.strip()[:2] != '//':
                 self.add_string(line.strip())
 
     def reset(self):
         """
         Reset the suffix set.
         """
-        self.suffix_set = pygtrie.PrefixSet()
+        self.suffix_set = pygtrie.CharTrie()
 
     def add_string(self, suffix):
         """
@@ -47,7 +47,7 @@ class SuffixFilter(object):
         Args:
             suffix (str): the string to add to the suffix set.
         """
-        self.suffix_set[reversed(suffix)] = True
+        self.suffix_set[suffix[::-1]] = True
 
     def filter(self, string):
         """
@@ -63,14 +63,16 @@ class SuffixFilter(object):
             `prefix` the remainder of the string; if `string` has no such
             suffix, then return the pair (`string`, `None`).
         """
-        suffix_match = self.suffix_set.longest_prefix(reversed(string))[0]
+        suffix_match = self.suffix_set.longest_prefix(string[::-1])[0]
+        # print('Matched {} to suffix {}'.format(string, suffix_match[::-1]))
         if suffix_match is None:
             return string, None
         else:
-            suffix = str(reversed(suffix_match))
+            suffix = suffix_match[::-1]
             # Strip off the suffix plus one extra character (a dot) to form
             # the prefix
             prefix = string[:string.rfind(suffix) - 1]
+            # print('RETURNING {}, {}'.format(prefix, suffix))
             return prefix, suffix
 
     def process_string(self, string, fd):
@@ -95,7 +97,7 @@ class SuffixFilter(object):
             self.end(fd)
 
     def match(self, prefix, suffix, fd):
-        print(prefix + suffix, file=fd)
+        print('.'.join([prefix, suffix]), file=fd)
 
     def start(self, fd):
         pass
