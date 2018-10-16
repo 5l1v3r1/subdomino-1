@@ -97,6 +97,9 @@ class SuffixFilter(object):
             self.end(fd)
 
     def match(self, prefix, suffix, fd):
+        url = '.'.join([prefix, suffix])
+        if '..' in url:
+            print('prefix: {}, suffix: {}'.format(prefix, suffix))
         print('.'.join([prefix, suffix]), file=fd)
 
     def start(self, fd):
